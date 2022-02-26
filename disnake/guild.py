@@ -196,6 +196,7 @@ class Guild(Hashable):
         - ``BANNER``: Guild can upload and use a banner. (i.e. :attr:`.banner`)
         - ``COMMUNITY``: Guild is a community server.
         - ``DISCOVERABLE``: Guild shows up in Server Discovery.
+        - ``DISCOVERABLE_DISABLED``: Guild cannot enable discovery.
         - ``ENABLED_DISCOVERABLE_BEFORE``: Guild had Server Discovery enabled at least once.
         - ``FEATURABLE``: Guild is able to be featured in Server Discovery.
         - ``HAS_DIRECTORY_ENTRY``: Guild is listed in a student hub.
