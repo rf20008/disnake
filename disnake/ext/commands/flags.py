@@ -59,8 +59,8 @@ from .view import StringView
 
 __all__ = (
     "Flag",
-    "flag",
     "FlagConverter",
+    "flag",
 )
 
 

@@ -61,8 +61,8 @@ if TYPE_CHECKING:
     AnyBot = Union[Bot, AutoShardedBot, InteractionBot, AutoShardedInteractionBot]
 
 __all__ = (
-    "CogMeta",
     "Cog",
+    "CogMeta",
 )
 
 FuncT = TypeVar("FuncT", bound=Callable[..., Any])

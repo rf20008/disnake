@@ -33,13 +33,13 @@ from .bot_base import BotBase, when_mentioned, when_mentioned_or
 from .interaction_bot_base import InteractionBotBase
 
 __all__ = (
-    "when_mentioned",
-    "when_mentioned_or",
-    "BotBase",
-    "Bot",
-    "InteractionBot",
     "AutoShardedBot",
     "AutoShardedInteractionBot",
+    "Bot",
+    "BotBase",
+    "InteractionBot",
+    "when_mentioned",
+    "when_mentioned_or",
 )
 
 MISSING: Any = disnake.utils.MISSING

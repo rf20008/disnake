@@ -35,21 +35,20 @@ from ..user import User
 from .base import Interaction
 
 __all__ = (
+    "AppCmdInter",
+    "AppCommandInter",
+    "AppCommandInteraction",
     "ApplicationCommandInteraction",
-    "GuildCommandInteraction",
-    "UserCommandInteraction",
-    "MessageCommandInteraction",
     "ApplicationCommandInteractionData",
     "ApplicationCommandInteractionDataOption",
     "ApplicationCommandInteractionDataResolved",
-    # aliases (we're trying to find out which one catches on)
-    "CommandInteraction",
+    "CmdInter",
     "CmdInteraction",
     "CommandInter",
-    "CmdInter",
-    "AppCommandInteraction",
-    "AppCommandInter",
-    "AppCmdInter",
+    "CommandInteraction",
+    "GuildCommandInteraction",
+    "MessageCommandInteraction",
+    "UserCommandInteraction",
 )
 
 MISSING = utils.MISSING

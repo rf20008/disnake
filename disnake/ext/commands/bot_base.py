@@ -64,9 +64,9 @@ if TYPE_CHECKING:
     from ._types import Check, CoroFunc, MaybeCoro
 
 __all__ = (
+    "BotBase",
     "when_mentioned",
     "when_mentioned_or",
-    "BotBase",
 )
 
 MISSING: Any = disnake.utils.MISSING

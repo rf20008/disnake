@@ -45,8 +45,8 @@ if TYPE_CHECKING:
 
 __all__ = (
     "AppInfo",
-    "PartialAppInfo",
     "InstallParams",
+    "PartialAppInfo",
 )
 
 

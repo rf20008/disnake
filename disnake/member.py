@@ -57,8 +57,8 @@ from .user import BaseUser, User, _UserTag
 from .utils import MISSING
 
 __all__ = (
-    "VoiceState",
     "Member",
+    "VoiceState",
 )
 
 if TYPE_CHECKING:

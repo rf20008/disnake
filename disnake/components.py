@@ -58,9 +58,9 @@ if TYPE_CHECKING:
     )
 
 __all__ = (
-    "Component",
     "ActionRow",
     "Button",
+    "Component",
     "SelectMenu",
     "SelectOption",
     "TextInput",

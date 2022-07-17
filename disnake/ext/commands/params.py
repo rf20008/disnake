@@ -89,16 +89,16 @@ TypeT = TypeVar("TypeT", bound=Type[Any])
 CallableT = TypeVar("CallableT", bound=Callable[..., Any])
 
 __all__ = (
+    "LargeInt",
+    "Param",
+    "ParamInfo",
     "Range",
     "String",
-    "LargeInt",
-    "ParamInfo",
-    "Param",
-    "param",
+    "converter_method",
     "inject",
     "option_enum",
+    "param",
     "register_injection",
-    "converter_method",
 )
 
 

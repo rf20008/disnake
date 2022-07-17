@@ -49,13 +49,13 @@ if TYPE_CHECKING:
 
 
 __all__ = (
-    "SystemChannelFlags",
-    "MessageFlags",
-    "PublicUserFlags",
-    "Intents",
-    "MemberCacheFlags",
     "ApplicationFlags",
     "ChannelFlags",
+    "Intents",
+    "MemberCacheFlags",
+    "MessageFlags",
+    "PublicUserFlags",
+    "SystemChannelFlags",
 )
 
 BF = TypeVar("BF", bound="BaseFlags")

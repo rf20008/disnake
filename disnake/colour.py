@@ -34,8 +34,8 @@ if TYPE_CHECKING:
 
 
 __all__ = (
-    "Colour",
     "Color",
+    "Colour",
 )
 
 

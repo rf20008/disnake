@@ -50,8 +50,8 @@ if TYPE_CHECKING:
 
 
 __all__ = (
-    "User",
     "ClientUser",
+    "User",
 )
 
 

@@ -61,12 +61,12 @@ from .ui.action_row import components_to_dict
 from .voice_client import VoiceClient, VoiceProtocol
 
 __all__ = (
-    "Snowflake",
-    "User",
-    "PrivateChannel",
+    "Connectable",
     "GuildChannel",
     "Messageable",
-    "Connectable",
+    "PrivateChannel",
+    "Snowflake",
+    "User",
 )
 
 VoiceProtocolT = TypeVar("VoiceProtocolT", bound=VoiceProtocol)

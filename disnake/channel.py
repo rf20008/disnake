@@ -64,15 +64,15 @@ from .threads import Thread
 from .utils import MISSING
 
 __all__ = (
-    "TextChannel",
-    "VoiceChannel",
-    "StageChannel",
-    "DMChannel",
     "CategoryChannel",
-    "NewsChannel",
+    "DMChannel",
     "ForumChannel",
     "GroupChannel",
+    "NewsChannel",
     "PartialMessageable",
+    "StageChannel",
+    "TextChannel",
+    "VoiceChannel",
 )
 
 if TYPE_CHECKING:

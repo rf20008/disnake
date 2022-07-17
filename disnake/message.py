@@ -97,11 +97,11 @@ if TYPE_CHECKING:
 
 __all__ = (
     "Attachment",
-    "Message",
-    "PartialMessage",
-    "MessageReference",
-    "InteractionReference",
     "DeletedReferencedMessage",
+    "InteractionReference",
+    "Message",
+    "MessageReference",
+    "PartialMessage",
 )
 
 
