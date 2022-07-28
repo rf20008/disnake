@@ -36,9 +36,7 @@ from typing import (
     Generic,
     List,
     Literal,
-    NamedTuple,
     Optional,
-    Sequence,
     Tuple,
     TypeVar,
     Union,
@@ -53,21 +51,11 @@ from ..asset import Asset
 from ..channel import PartialMessageable
 from ..enums import WebhookType, try_enum
 from ..errors import DiscordServerError, Forbidden, HTTPException, NotFound, WebhookTokenMissing
-from ..flags import MessageFlags
-from ..http import Route, set_attachments, to_multipart, to_multipart_with_attachments
+from ..http import Route, handle_message_parameters, set_attachments, to_multipart
 from ..message import Message
 from ..mixins import Hashable
-from ..ui.action_row import MessageUIComponent, components_to_dict
+from ..ui.action_row import MessageUIComponent
 from ..user import BaseUser, User
-
-__all__ = (
-    "Webhook",
-    "WebhookMessage",
-    "PartialWebhookChannel",
-    "PartialWebhookGuild",
-)
-
-_log = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     import datetime
@@ -82,12 +70,20 @@ if TYPE_CHECKING:
     from ..mentions import AllowedMentions
     from ..message import Attachment
     from ..state import ConnectionState
-    from ..sticker import GuildSticker, StickerItem
     from ..types.message import Message as MessagePayload
     from ..types.webhook import Webhook as WebhookPayload
     from ..ui.action_row import Components
     from ..ui.view import View
 
+
+__all__ = (
+    "Webhook",
+    "WebhookMessage",
+    "PartialWebhookChannel",
+    "PartialWebhookGuild",
+)
+
+_log = logging.getLogger(__name__)
 MISSING = utils.MISSING
 
 
@@ -474,148 +470,6 @@ class AsyncWebhookAdapter:
             wehook_token=token,
         )
         return self.request(r, session=session)
-
-
-class DictPayloadParameters(NamedTuple):
-    payload: Dict[str, Any]
-    files: Optional[List[File]]
-
-
-class PayloadParameters(NamedTuple):
-    payload: Optional[Dict[str, Any]]
-    multipart: Optional[List[Dict[str, Any]]]
-    files: Optional[List[File]]
-
-
-def handle_message_parameters_dict(
-    content: Optional[str] = MISSING,
-    *,
-    username: str = MISSING,
-    avatar_url: Any = MISSING,
-    tts: bool = False,
-    ephemeral: bool = None,
-    suppress_embeds: bool = None,
-    file: File = MISSING,
-    files: List[File] = MISSING,
-    attachments: Optional[List[Attachment]] = MISSING,
-    embed: Optional[Embed] = MISSING,
-    embeds: List[Embed] = MISSING,
-    view: Optional[View] = MISSING,
-    components: Optional[Components[MessageUIComponent]] = MISSING,
-    allowed_mentions: Optional[AllowedMentions] = MISSING,
-    previous_allowed_mentions: Optional[AllowedMentions] = None,
-    stickers: Sequence[Union[GuildSticker, StickerItem]] = MISSING,
-    thread_name: Optional[str] = None,
-) -> DictPayloadParameters:
-    if files is not MISSING and file is not MISSING:
-        raise TypeError("Cannot mix file and files keyword arguments.")
-    if embeds is not MISSING and embed is not MISSING:
-        raise TypeError("Cannot mix embed and embeds keyword arguments.")
-    if view is not MISSING and components is not MISSING:
-        raise TypeError("Cannot mix view and components keyword arguments.")
-
-    if file is not MISSING:
-        files = [file]
-
-    payload = {}
-    if embed is not MISSING:
-        embeds = [embed] if embed else []
-    if embeds is not MISSING:
-        if len(embeds) > 10:
-            raise ValueError("embeds has a maximum of 10 elements.")
-        payload["embeds"] = [e.to_dict() for e in embeds]
-        for embed in embeds:
-            if embed._files:
-                files = files or []
-                files.extend(embed._files.values())
-
-    if content is not MISSING:
-        payload["content"] = str(content) if content is not None else None
-    if view is not MISSING:
-        payload["components"] = view.to_components() if view is not None else []
-    if components is not MISSING:
-        payload["components"] = [] if components is None else components_to_dict(components)
-
-    if attachments is not MISSING:
-        payload["attachments"] = [] if attachments is None else [a.to_dict() for a in attachments]
-
-    payload["tts"] = tts
-    if avatar_url:
-        payload["avatar_url"] = str(avatar_url)
-    if username:
-        payload["username"] = username
-
-    if ephemeral is not None or suppress_embeds is not None:
-        payload["flags"] = 0
-        if suppress_embeds:
-            payload["flags"] |= MessageFlags.suppress_embeds.flag
-        if ephemeral:
-            payload["flags"] |= MessageFlags.ephemeral.flag
-
-    if allowed_mentions:
-        if previous_allowed_mentions is not None:
-            payload["allowed_mentions"] = previous_allowed_mentions.merge(
-                allowed_mentions
-            ).to_dict()
-        else:
-            payload["allowed_mentions"] = allowed_mentions.to_dict()
-    elif previous_allowed_mentions is not None:
-        payload["allowed_mentions"] = previous_allowed_mentions.to_dict()
-
-    if stickers is not MISSING:
-        payload["sticker_ids"] = [s.id for s in stickers]
-
-    if thread_name is not None:
-        payload["thread_name"] = thread_name
-
-    return DictPayloadParameters(payload=payload, files=files)
-
-
-def handle_message_parameters(
-    content: Optional[str] = MISSING,
-    *,
-    username: str = MISSING,
-    avatar_url: Any = MISSING,
-    tts: bool = False,
-    ephemeral: bool = None,
-    suppress_embeds: bool = None,
-    file: File = MISSING,
-    files: List[File] = MISSING,
-    attachments: Optional[List[Attachment]] = MISSING,
-    embed: Optional[Embed] = MISSING,
-    embeds: List[Embed] = MISSING,
-    view: Optional[View] = MISSING,
-    components: Optional[Components[MessageUIComponent]] = MISSING,
-    allowed_mentions: Optional[AllowedMentions] = MISSING,
-    previous_allowed_mentions: Optional[AllowedMentions] = None,
-    stickers: Sequence[Union[GuildSticker, StickerItem]] = MISSING,
-    thread_name: Optional[str] = None,
-) -> PayloadParameters:
-    params = handle_message_parameters_dict(
-        content=content,
-        username=username,
-        avatar_url=avatar_url,
-        tts=tts,
-        ephemeral=ephemeral,
-        suppress_embeds=suppress_embeds,
-        file=file,
-        files=files,
-        attachments=attachments,
-        embed=embed,
-        embeds=embeds,
-        view=view,
-        components=components,
-        allowed_mentions=allowed_mentions,
-        previous_allowed_mentions=previous_allowed_mentions,
-        stickers=stickers,
-        thread_name=thread_name,
-    )
-
-    if params.files:
-        multipart = to_multipart_with_attachments(params.payload, params.files)
-        return PayloadParameters(payload=None, multipart=multipart, files=params.files)
-
-    return PayloadParameters(payload=params.payload, multipart=None, files=params.files)
 
 
 async_context: ContextVar[AsyncWebhookAdapter] = ContextVar(
