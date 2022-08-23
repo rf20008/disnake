@@ -23,7 +23,7 @@
 from __future__ import annotations
 
 import asyncio
-from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Sequence, Tuple, Union
+from typing import TYPE_CHECKING, Any, Callable, Dict, Literal, Optional, Sequence, Tuple, Union
 
 from disnake.app_commands import MessageCommand, UserCommand
 from disnake.i18n import Localized
@@ -95,6 +95,7 @@ class InvokableUserCommand(InvokableApplicationCommand):
         name: LocalizedOptional = None,
         dm_permission: bool = None,
         default_member_permissions: Optional[Union[Permissions, int]] = None,
+        nsfw: Optional[Literal[False]] = None,
         guild_ids: Sequence[int] = None,
         auto_sync: bool = None,
         **kwargs,
@@ -121,6 +122,7 @@ class InvokableUserCommand(InvokableApplicationCommand):
             name=name_loc._upgrade(self.name),
             dm_permission=dm_permission and not self._guild_only,
             default_member_permissions=default_member_permissions,
+            nsfw=nsfw,
         )
 
     async def _call_external_error_handlers(
@@ -195,6 +197,7 @@ class InvokableMessageCommand(InvokableApplicationCommand):
         name: LocalizedOptional = None,
         dm_permission: bool = None,
         default_member_permissions: Optional[Union[Permissions, int]] = None,
+        nsfw: Optional[Literal[False]] = None,
         guild_ids: Sequence[int] = None,
         auto_sync: bool = None,
         **kwargs,
@@ -221,6 +224,7 @@ class InvokableMessageCommand(InvokableApplicationCommand):
             name=name_loc._upgrade(self.name),
             dm_permission=dm_permission and not self._guild_only,
             default_member_permissions=default_member_permissions,
+            nsfw=nsfw,
         )
 
     async def _call_external_error_handlers(
@@ -255,6 +259,7 @@ def user_command(
     name: LocalizedOptional = None,
     dm_permission: bool = None,
     default_member_permissions: Optional[Union[Permissions, int]] = None,
+    nsfw: Optional[Literal[False]] = None,
     guild_ids: Sequence[int] = None,
     auto_sync: bool = None,
     extras: Dict[str, Any] = None,
@@ -312,6 +317,7 @@ def user_command(
             name=name,
             dm_permission=dm_permission,
             default_member_permissions=default_member_permissions,
+            nsfw=nsfw,
             guild_ids=guild_ids,
             auto_sync=auto_sync,
             extras=extras,
@@ -326,6 +332,7 @@ def message_command(
     name: LocalizedOptional = None,
     dm_permission: bool = None,
     default_member_permissions: Optional[Union[Permissions, int]] = None,
+    nsfw: Optional[Literal[False]] = None,
     guild_ids: Sequence[int] = None,
     auto_sync: bool = None,
     extras: Dict[str, Any] = None,
@@ -386,6 +393,7 @@ def message_command(
             name=name,
             dm_permission=dm_permission,
             default_member_permissions=default_member_permissions,
+            nsfw=nsfw,
             guild_ids=guild_ids,
             auto_sync=auto_sync,
             extras=extras,

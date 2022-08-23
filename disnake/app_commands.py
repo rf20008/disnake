@@ -25,7 +25,7 @@ from __future__ import annotations
 import math
 import re
 from abc import ABC
-from typing import TYPE_CHECKING, ClassVar, Dict, List, Mapping, Optional, Tuple, Union
+from typing import TYPE_CHECKING, ClassVar, Dict, List, Literal, Mapping, Optional, Tuple, Union
 
 from .enums import (
     ApplicationCommandPermissionType,
@@ -488,12 +488,21 @@ class ApplicationCommand(ABC):
         name: LocalizedRequired,
         dm_permission: bool = None,
         default_member_permissions: Optional[Union[Permissions, int]] = None,
+        nsfw: Optional[Literal[False]] = None,
     ):
         self.type: ApplicationCommandType = enum_if_int(ApplicationCommandType, type)
 
         name_loc = Localized._cast(name, True)
         self.name: str = name_loc.string
         self.name_localizations: LocalizationValue = name_loc.localizations
+        self.nsfw: bool = nsfw or False
+
+        # TODO: remove once api support clarified
+        if self.nsfw is not False:
+            raise TypeError(
+                "The `nsfw` parameter may currently only be set to `False`. "
+                "Its behavior is still considered unstable, and may have unknown consequences."
+            )
 
         self.dm_permission: bool = True if dm_permission is None else dm_permission
 
@@ -543,6 +552,7 @@ class ApplicationCommand(ABC):
             self.type == other.type
             and self.name == other.name
             and self.name_localizations == other.name_localizations
+            and self.nsfw == other.nsfw
             and self._default_member_permissions == other._default_member_permissions
             # ignore `dm_permission` if comparing guild commands
             and (
@@ -561,6 +571,7 @@ class ApplicationCommand(ABC):
             "name": self.name,
             "dm_permission": self.dm_permission,
             "default_permission": True,
+            "nsfw": self.nsfw,
         }
 
         if self._default_member_permissions is None:
@@ -615,12 +626,14 @@ class UserCommand(ApplicationCommand):
         name: LocalizedRequired,
         dm_permission: bool = None,
         default_member_permissions: Optional[Union[Permissions, int]] = None,
+        nsfw: Optional[Literal[False]] = None,
     ):
         super().__init__(
             type=ApplicationCommandType.user,
             name=name,
             dm_permission=dm_permission,
             default_member_permissions=default_member_permissions,
+            nsfw=nsfw,
         )
 
 
@@ -667,6 +680,10 @@ class APIUserCommand(UserCommand, _APIApplicationCommandMixin):
             dm_permission=data.get("dm_permission") is not False,
             default_member_permissions=_get_as_snowflake(data, "default_member_permissions"),
         )
+
+        # TODO: move once api support clarified
+        self.nsfw = data.get("nsfw") or False
+
         self._update_common(data)
         return self
 
@@ -698,12 +715,14 @@ class MessageCommand(ApplicationCommand):
         name: LocalizedRequired,
         dm_permission: bool = None,
         default_member_permissions: Optional[Union[Permissions, int]] = None,
+        nsfw: Optional[Literal[False]] = None,
     ):
         super().__init__(
             type=ApplicationCommandType.message,
             name=name,
             dm_permission=dm_permission,
             default_member_permissions=default_member_permissions,
+            nsfw=nsfw,
         )
 
 
@@ -750,6 +769,7 @@ class APIMessageCommand(MessageCommand, _APIApplicationCommandMixin):
             dm_permission=data.get("dm_permission") is not False,
             default_member_permissions=_get_as_snowflake(data, "default_member_permissions"),
         )
+        self.nsfw = data.get("nsfw") or False
         self._update_common(data)
         return self
 
@@ -799,12 +819,14 @@ class SlashCommand(ApplicationCommand):
         options: List[Option] = None,
         dm_permission: bool = None,
         default_member_permissions: Optional[Union[Permissions, int]] = None,
+        nsfw: Optional[Literal[False]] = None,
     ):
         super().__init__(
             type=ApplicationCommandType.chat_input,
             name=name,
             dm_permission=dm_permission,
             default_member_permissions=default_member_permissions,
+            nsfw=nsfw,
         )
         _validate_name(self.name)
 
@@ -933,6 +955,7 @@ class APISlashCommand(SlashCommand, _APIApplicationCommandMixin):
             dm_permission=data.get("dm_permission") is not False,
             default_member_permissions=_get_as_snowflake(data, "default_member_permissions"),
         )
+        self.nsfw = data.get("nsfw") or False
         self._update_common(data)
         return self
 

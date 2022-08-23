@@ -30,6 +30,7 @@ from typing import (
     Callable,
     Dict,
     List,
+    Literal,
     Optional,
     Sequence,
     Tuple,
@@ -397,6 +398,7 @@ class InvokableSlashCommand(InvokableApplicationCommand):
         options: List[Option] = None,
         dm_permission: bool = None,
         default_member_permissions: Optional[Union[Permissions, int]] = None,
+        nsfw: Optional[Literal[False]] = None,
         guild_ids: Sequence[int] = None,
         connectors: Dict[str, str] = None,
         auto_sync: bool = None,
@@ -437,6 +439,7 @@ class InvokableSlashCommand(InvokableApplicationCommand):
             options=options or [],
             dm_permission=dm_permission and not self._guild_only,
             default_member_permissions=default_member_permissions,
+            nsfw=nsfw,
         )
 
     def _ensure_assignment_on_copy(self, other: SlashCommandT) -> SlashCommandT:
@@ -703,6 +706,7 @@ def slash_command(
     description: LocalizedOptional = None,
     dm_permission: bool = None,
     default_member_permissions: Optional[Union[Permissions, int]] = None,
+    nsfw: Optional[Literal[False]] = None,
     options: List[Option] = None,
     guild_ids: Sequence[int] = None,
     connectors: Dict[str, str] = None,
@@ -777,6 +781,7 @@ def slash_command(
             options=options,
             dm_permission=dm_permission,
             default_member_permissions=default_member_permissions,
+            nsfw=nsfw,
             guild_ids=guild_ids,
             connectors=connectors,
             auto_sync=auto_sync,
