@@ -203,6 +203,13 @@ class Client:
 
     Parameters
     ----------
+    intents: :class:`Intents`
+        The intents that you want to enable for the session. This is a way of
+        disabling and enabling certain gateway events from triggering and being sent.
+
+        This parameter is **required**.
+
+        .. versionadded:: 1.5
     max_messages: Optional[:class:`int`]
         The maximum number of messages to store in the internal message cache.
         This defaults to ``1000``. Passing in ``None`` disables the message cache.
@@ -225,12 +232,6 @@ class Client:
         The total number of shards.
     application_id: :class:`int`
         The client's application ID.
-    intents: Optional[:class:`Intents`]
-        The intents that you want to enable for the session. This is a way of
-        disabling and enabling certain gateway events from triggering and being sent.
-        If not given, defaults to a regularly constructed :class:`Intents` class.
-
-        .. versionadded:: 1.5
 
     member_cache_flags: :class:`MemberCacheFlags`
         Allows for finer control over how the library caches members.
@@ -368,6 +369,7 @@ class Client:
     def __init__(
         self,
         *,
+        intents: Intents,
         asyncio_debug: bool = False,
         loop: Optional[asyncio.AbstractEventLoop] = None,
         shard_id: Optional[int] = None,
@@ -387,7 +389,6 @@ class Client:
         allowed_mentions: Optional[AllowedMentions] = None,
         activity: Optional[BaseActivity] = None,
         status: Optional[Union[Status, str]] = None,
-        intents: Optional[Intents] = None,
         chunk_guilds_at_startup: Optional[bool] = None,
         member_cache_flags: Optional[MemberCacheFlags] = None,
     ):
@@ -471,7 +472,7 @@ class Client:
         allowed_mentions: Optional[AllowedMentions],
         activity: Optional[BaseActivity],
         status: Optional[Union[str, Status]],
-        intents: Optional[Intents],
+        intents: Intents,
         chunk_guilds_at_startup: Optional[bool],
         member_cache_flags: Optional[MemberCacheFlags],
     ) -> ConnectionState:

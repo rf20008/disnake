@@ -201,6 +201,7 @@ class ConnectionState:
         hooks: Dict[str, Callable],
         http: HTTPClient,
         loop: asyncio.AbstractEventLoop,
+        intents: Intents,
         max_messages: Optional[int] = 1000,
         application_id: Optional[int] = None,
         heartbeat_timeout: float = 60.0,
@@ -208,7 +209,6 @@ class ConnectionState:
         allowed_mentions: Optional[AllowedMentions] = None,
         activity: Optional[BaseActivity] = None,
         status: Optional[Union[str, Status]] = None,
-        intents: Optional[Intents] = None,
         chunk_guilds_at_startup: Optional[bool] = None,
         member_cache_flags: Optional[MemberCacheFlags] = None,
     ) -> None:
@@ -247,18 +247,13 @@ class ConnectionState:
         if status:
             self._status = "invisible" if status is Status.offline else str(status)
 
-        if intents is not None:
-            if not isinstance(intents, Intents):
-                raise TypeError(f"intents parameter must be Intents, not {type(intents)!r}.")
+        if not isinstance(intents, Intents):
+            raise TypeError(f"intents parameter must be Intents, not {type(intents)!r}.")
 
-            if not intents.guilds:
-                _log.warning(
-                    "Guilds intent seems to be disabled. This may cause state related issues."
-                )
+        if not intents.guilds:
+            _log.warning("Guilds intent seems to be disabled. This may cause state related issues.")
 
-            self._intents: Intents = intents
-        else:
-            self._intents: Intents = Intents.default()
+        self._intents: Intents = intents
 
         self._chunk_guilds: bool = (
             self._intents.members if chunk_guilds_at_startup is None else chunk_guilds_at_startup
